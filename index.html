@@ -34,6 +34,7 @@
     <symbol id="i-ajustar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
     <symbol id="i-grade" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol>
     <symbol id="i-mais" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-analise" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M14 4v16M7 9h4M7 13h4"/></symbol>
     <symbol id="i-menos" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></symbol>
     <symbol id="i-centro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></symbol>
     <symbol id="i-lixeira" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
@@ -172,6 +173,7 @@
     <a class="ferramenta" href="#extremos"><svg><use href="#i-extremos"/></svg>Máx e mín</a>
     <a class="ferramenta" href="#otimizacao"><svg><use href="#i-otimizar"/></svg>Otimizar</a>
     <span class="espaco"></span>
+    <button class="ferramenta" type="button" data-acao="analise" aria-pressed="true"><svg><use href="#i-analise"/></svg>Análise</button>
     <button class="ferramenta" type="button" data-acao="ajustar"><svg><use href="#i-ajustar"/></svg>Ajustar zoom</button>
     <button class="ferramenta" type="button" data-acao="grade" aria-pressed="true"><svg><use href="#i-grade"/></svg>Grade</button>
   </nav>
@@ -179,11 +181,15 @@
   <div class="area">
     <!-- objetos -->
     <aside class="painel esq" aria-labelledby="obj-titulo">
-      <div class="painel-cabeca"><h2 id="obj-titulo" style="font-size:14px">Objetos</h2><span data-contagem>4 itens</span></div>
+      <div class="painel-cabeca">
+        <h2 id="obj-titulo" style="font-size:14px">Objetos</h2>
+        <span class="contagem" data-contagem>1 item</span>
+        <button class="btn-novo" type="button" data-novo aria-label="Adicionar novo objeto" title="Adicionar objeto"><svg><use href="#i-mais"/></svg></button>
+      </div>
       <ul class="objetos" id="lista-objetos">
         <!-- preenchido pelo app.js a partir de "objetos" -->
       </ul>
-      <p class="painel-dica">Clique no nome para analisar. Clique duas vezes para editar no campo de comandos.</p>
+      <p class="painel-dica">Use <strong>+</strong> para adicionar um objeto. Clique no nome para analisar; clique duas vezes para editar no campo de comandos.</p>
     </aside>
 
     <!-- gráfico -->
@@ -212,8 +218,12 @@
     </section>
 
     <!-- análise -->
-    <aside class="painel dir" aria-labelledby="analise-titulo">
-      <div class="analise-titulo"><h2 id="analise-titulo">Análise de f</h2><span class="mat" style="color:var(--tinta-2)">f(x) = x³ − 3x + 1</span></div>
+    <aside class="painel dir" id="painel-analise" aria-labelledby="analise-titulo">
+      <div class="analise-titulo">
+        <h2 id="analise-titulo">Análise de f</h2>
+        <button class="btn-fechar-analise" type="button" data-acao="analise" aria-label="Ocultar painel de análise" title="Ocultar análise"><svg><use href="#i-fechar"/></svg></button>
+        <span class="mat" style="color:var(--tinta-2)">f(x) = x³ − 3x + 1</span>
+      </div>
 
       <div class="bloco">
         <h3>Limite <a class="btn btn-texto btn-pequeno" href="#limite">Abrir tela</a></h3>
@@ -255,7 +265,8 @@
 
   <form class="comandos" data-acao="comando" novalidate>
     <label for="comando">Comando</label>
-    <input class="entrada" id="comando" autocomplete="off" spellcheck="false" placeholder="f(x) = x^2 − 4,  Derivada(f),  Limite(f, 2),  A = (1, 2)" aria-describedby="retorno-comando">
+    <input class="entrada" id="comando" autocomplete="off" spellcheck="false" placeholder="f(x) = x² − 4   ·   Derivada(f)   ·   Limite(f, 2)" aria-describedby="retorno-comando">
+    <button class="btn btn-pequeno" type="button" data-abrir="dlg-sintaxe"><svg><use href="#i-ajuda"/></svg>Como escrever</button>
     <button class="btn btn-principal" type="submit">Executar</button>
     <p class="retorno" id="retorno-comando" role="status"></p>
   </form>
@@ -637,7 +648,7 @@
       <div class="tut-palco" data-etapa="1">
         <div class="simula foco" style="flex-direction:column; padding:16px"><span class="etiqueta">Campo da função</span>
           <span class="rotulo">f(x) =</span><span class="entrada entrada-funcao" style="display:flex; align-items:center">x^3 - 3x + 1</span><span class="previa">Prévia: <span class="mat">x³ − 3x + 1</span></span></div>
-        <div class="balao"><strong>Escreva como no caderno</strong><span>Use ^ para potência e parênteses em sin(x). A prévia mostra como o app entendeu a expressão.</span></div>
+        <div class="balao"><strong>Escreva como no caderno</strong><span>Use ^ ou sobrescrito para potência, como x^3 ou x³. Para outra função, clique no + da lista de objetos. O botão “Como escrever” mostra todas as formas aceitas.</span></div>
         <div class="simula apagado" aria-hidden="true"><span class="peca">x</span><span class="peca">^</span><span class="peca">√</span><span class="peca">π</span><span class="peca">sin</span><span class="peca">cos</span><span class="peca">ln</span></div>
       </div>
 
@@ -724,7 +735,57 @@
     <div class="botoes"><button class="btn btn-principal" value="fechar">Fechar</button></div>
   </form>
 </dialog>
-
+<dialog id="dlg-novo" aria-labelledby="dlg-novo-t">
+  <form class="dialogo" data-acao="novo" novalidate>
+    <h2 id="dlg-novo-t">Novo objeto</h2>
+    <p>Digite a expressão da nova função. Ela entra no gráfico e na lista de objetos.</p>
+    <div class="campo-novo">
+      <span class="mat" id="novo-prefixo">g(x) =</span>
+      <label class="sr-only" for="novo-expr">Expressão da função</label>
+      <input class="entrada" id="novo-expr" autocomplete="off" spellcheck="false" placeholder="x^2 - 4" aria-describedby="novo-dica novo-erro">
+    </div>
+    <p class="dica-sintaxe" id="novo-dica">Aceita <span class="mat">x²</span> ou <span class="mat">x^2</span>, <span class="mat">3x</span>, <span class="mat">sin(x)</span>, <span class="mat">√x</span>, <span class="mat">pi</span> e <span class="mat">|x|</span>. <button class="link-sintaxe" type="button" data-abrir="dlg-sintaxe">Ver todas as formas</button></p>
+    <p class="msg-erro" id="novo-erro" role="alert"></p>
+    <div class="exemplos" data-exemplos-novo>
+      <button type="button" data-valor="x^2 - 4">x² − 4</button>
+      <button type="button" data-valor="x^3 - 3x^2 + 1">x³ − 3x² + 1</button>
+      <button type="button" data-valor="sin(x)">sin(x)</button>
+      <button type="button" data-valor="1/x">1/x</button>
+      <button type="button" data-valor="sqrt(x)">√x</button>
+      <button type="button" data-valor="e^(-x^2)">e^(−x²)</button>
+    </div>
+    <div class="botoes"><button class="btn" type="button" data-fechar>Cancelar</button><button class="btn btn-principal" type="submit">Adicionar ao gráfico</button></div>
+  </form>
+</dialog>
+<dialog id="dlg-sintaxe" aria-labelledby="dlg-sintaxe-t">
+  <div class="dialogo">
+    <h2 id="dlg-sintaxe-t">Como escrever as funções</h2>
+    <p>Você pode usar o teclado normal, sobrescritos ou colar uma expressão. O MiniGeo entende as duas formas.</p>
+    <table class="tabela-sintaxe">
+      <caption class="sr-only">Formas aceitas na escrita de funções</caption>
+      <tbody>
+        <tr><th scope="row">Potência</th><td><code>x^3</code> ou <code>x³</code>, <code>(x+1)²</code>, <code>x^-1</code></td></tr>
+        <tr><th scope="row">Multiplicação</th><td><code>3x</code>, <code>2(x − 1)</code>, <code>3*x</code></td></tr>
+        <tr><th scope="row">Divisão</th><td><code>1/x</code>, <code>(x² − 4)/(x − 2)</code></td></tr>
+        <tr><th scope="row">Raiz e módulo</th><td><code>sqrt(x)</code> ou <code>√x</code>, <code>abs(x)</code> ou <code>|x|</code></td></tr>
+        <tr><th scope="row">Funções</th><td><code>sin</code>, <code>cos</code>, <code>tan</code>, <code>ln</code>, <code>log</code>, <code>exp</code>, <code>asin</code>, <code>acos</code>, <code>atan</code>, <code>floor</code>, <code>ceil</code></td></tr>
+        <tr><th scope="row">Constantes</th><td><code>pi</code> ou <code>π</code>, <code>e</code></td></tr>
+        <tr><th scope="row">Decimais</th><td><code>1,5</code> ou <code>1.5</code></td></tr>
+        <tr><th scope="row">Comandos</th><td><code>Derivada(f)</code>, <code>Limite(f, 2)</code>, <code>Tangente(f, 1)</code></td></tr>
+      </tbody>
+    </table>
+    <p class="dica-sintaxe">Clique em um exemplo para preencher o campo de comando:</p>
+    <div class="exemplos" data-exemplos-sintaxe>
+      <button type="button" data-exemplo="f(x) = x³ - 3x² + 1">x³ − 3x² + 1</button>
+      <button type="button" data-exemplo="f(x) = (x² - 4)/(x - 2)">(x² − 4)/(x − 2)</button>
+      <button type="button" data-exemplo="f(x) = sin(x)/x">sin(x)/x</button>
+      <button type="button" data-exemplo="f(x) = e^(-x²)">e^(−x²)</button>
+      <button type="button" data-exemplo="Derivada(f)">Derivada(f)</button>
+      <button type="button" data-exemplo="Limite(f, 2)">Limite(f, 2)</button>
+    </div>
+    <div class="botoes"><button class="btn btn-principal" type="button" data-fechar>Entendi</button></div>
+  </div>
+</dialog>
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script src="js/math-engine.js"></script>

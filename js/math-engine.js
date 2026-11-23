@@ -5,6 +5,31 @@
   const FUNCTIONS = new Set(['sin','cos','tan','asin','acos','atan','sqrt','abs','ln','log','exp','floor','ceil']);
   const CONSTANTS = new Set(['pi','e']);
 
+  const SUPERSCRIPT = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-','⁺':'+' };
+
+  // Converte potências escritas com sobrescrito (x², x³, (x+1)², x⁻¹) para a forma x^2.
+  function expandSuperscripts(text) {
+    return text.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+/g, run => {
+      const digits = Array.from(run).map(char => SUPERSCRIPT[char]).join('');
+      return /[+-]/.test(digits) ? `^(${digits})` : `^${digits}`;
+    });
+  }
+
+  // Aceita raiz escrita como √x, √(x+1) ou √9.
+  function expandRadicals(text) {
+    let out = '';
+    let i = 0;
+    while (i < text.length) {
+      if (text[i] !== '√') { out += text[i++]; continue; }
+      i++;
+      if (text[i] === '(') { out += 'sqrt('; i++; continue; }
+      const match = /^\d+(?:[.,]\d+)?|^[a-zA-Z_][a-zA-Z_\d]*/.exec(text.slice(i));
+      if (match) { out += `sqrt(${match[0]})`; i += match[0].length; }
+      else out += 'sqrt';
+    }
+    return out;
+  }
+
   function normalize(source) {
     let text = String(source ?? '').trim()
       .replace(/[−–—]/g, '-')
@@ -12,6 +37,8 @@
       .replace(/÷/g, '/')
       .replace(/π/g, 'pi')
       .replace(/\s+/g, '');
+    text = expandSuperscripts(text);
+    text = expandRadicals(text);
     // Suporta |x| em exemplos simples e evita manter uma gramática duplicada para barras.
     text = text.replace(/\|([^|]+)\|/g, 'abs($1)');
     return text;
@@ -26,7 +53,10 @@
       if (/\d|\./.test(c)) {
         const start = i;
         let dots = 0;
-        while (i < text.length && /[\d.]/.test(text[i])) { if (text[i] === '.') dots++; i++; }
+        while (i < text.length && (/[\d.]/.test(text[i]) || (text[i] === ',' && /\d/.test(text[i + 1] || '')))) {
+          if (text[i] === '.' || text[i] === ',') dots++;
+          i++;
+        }
         if (dots > 1 || text[start] === '.') throw new Error('Número inválido na expressão.');
         if (/[eE]/.test(text[i] || '')) {
           i++; if (/[+-]/.test(text[i] || '')) i++;
@@ -34,7 +64,7 @@
           while (i < text.length && /\d/.test(text[i])) i++;
           if (i === expStart) throw new Error('Expoente numérico incompleto.');
         }
-        raw.push({ type: 'number', value: Number(text.slice(start, i)) });
+        raw.push({ type: 'number', value: Number(text.slice(start, i).replace(',', '.')) });
         continue;
       }
       if (/[a-zA-Z_]/.test(c)) {
@@ -44,7 +74,7 @@
         continue;
       }
       if ('+-*/^(),'.includes(c)) { raw.push({ type: c, value: c }); i++; continue; }
-      throw new Error(`Caractere não reconhecido: “${c}”.`);
+      throw new Error(`Caractere não reconhecido: “${c}”. Use ^ ou sobrescrito para potências, por exemplo x^3 ou x³.`);
     }
     const result = [];
     const canEnd = t => t && (t.type === 'number' || t.type === 'id' || t.type === ')');
@@ -220,6 +250,17 @@
   }
 
   const PRECEDENCE = { '+': 1, '-': 1, '*': 2, '/': 2, '^': 3 };
+  const SUPERSCRIPT_DIGITS = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻' };
+
+  function superscriptExponent(node) {
+    let value;
+    if (node && node.type === 'number') value = node.value;
+    else if (node && node.type === 'unary' && node.arg.type === 'number') value = node.op === '-' ? -node.arg.value : node.arg.value;
+    else return null;
+    if (!Number.isInteger(value) || value === 0 || value === 1 || Math.abs(value) > 99) return null;
+    return String(value).split('').map(char => SUPERSCRIPT_DIGITS[char] || '').join('');
+  }
+
   function format(node, parent = 0) {
     if (!node) return 'não disponível';
     if (node.type === 'number') return Number.isInteger(node.value) ? String(node.value) : formatNumber(node.value);
@@ -229,8 +270,16 @@
     if (node.type === 'unary') return `${node.op === '-' ? '−' : ''}${format(node.arg, 4)}`;
     if (node.type === 'binary') {
       const p = PRECEDENCE[node.op];
-      const left = format(node.left, p), right = format(node.right, p + (node.op === '^' ? -1 : 0));
-      const op = node.op === '*' ? ' · ' : node.op === '-' ? ' − ' : ` ${node.op} `;
+      if (node.op === '^') {
+        const base = format(node.left, 4);
+        const exponent = superscriptExponent(node.right);
+        const power = exponent ? `${base}${exponent}` : `${base}^${format(node.right, 3)}`;
+        return p < parent ? `(${power})` : power;
+      }
+      const left = format(node.left, p), right = format(node.right, p);
+      const implicit = node.op === '*' && node.left.type === 'number' &&
+        (node.right.type === 'var' || (node.right.type === 'binary' && node.right.op === '^'));
+      const op = node.op === '*' ? (implicit ? '' : ' · ') : node.op === '-' ? ' − ' : ` ${node.op} `;
       const result = `${left}${op}${right}`;
       return p < parent ? `(${result})` : result;
     }
@@ -240,8 +289,8 @@
   function formatNumber(value) {
     if (!Number.isFinite(value)) return value === Infinity ? '∞' : value === -Infinity ? '−∞' : 'indefinido';
     if (Math.abs(value) < 1e-10) return '0';
-    if (Math.abs(value - Math.round(value)) < 1e-4) return String(Math.round(value));
-    return value.toLocaleString('pt-BR', { maximumFractionDigits: 6 });
+    if (Math.abs(value - Math.round(value)) < 1e-4) return String(Math.round(value)).replace('-', '−');
+    return value.toLocaleString('pt-BR', { maximumFractionDigits: 6 }).replace('-', '−');
   }
   function numeric(source) { const value = Number(String(source).replace(',', '.').replace(/[∞]/g, 'Infinity').replace(/−/g, '-')); return Number.isFinite(value) || value === Infinity || value === -Infinity ? value : NaN; }
   function expression(source) { return normalizeTree(parse(source)); }
