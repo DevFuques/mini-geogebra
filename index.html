@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MiniGeo</title>
+<meta name="description" content="MiniGeo: funções, gráficos, limites, derivadas, máximos e mínimos e otimização, com passo a passo.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23182033'/%3E%3Cpath d='M6 21c4 0 5-10 10-10s6 10 10 10' stroke='%23FFE066' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<!-- Fontes: se não houver internet, o CSS usa fontes do sistema no lugar -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- =========================================================
+     ÍCONES (usados com <svg><use href="#i-nome"/></svg>)
+     ========================================================= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 17c3 0 4-10 9-10s5 10 9 10"/></symbol>
+    <symbol id="i-voltar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-desfazer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></symbol>
+    <symbol id="i-refazer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9a5 5 0 000 10h3"/></symbol>
+    <symbol id="i-ajuda" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 115 0c0 1.5-2.5 2-2.5 4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-fechar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-mover" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 3l14 8-6 2-2 6z"/></symbol>
+    <symbol id="i-funcao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 17c4 0 5-12 9-12s5 14 9 14"/></symbol>
+    <symbol id="i-limite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 18l6-6M20 6l-6 6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-derivada" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 19c5 0 7-12 18-14"/><path d="M4 20L20 8" stroke-dasharray="3 3"/></symbol>
+    <symbol id="i-extremos" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 18c3 0 3-12 6-12s3 12 6 12 3-6 6-6"/><path d="M7 3h4"/></symbol>
+    <symbol id="i-otimizar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M7 20V11h10v9"/><path d="M12 3v5M9.5 5.5L12 8l2.5-2.5"/></symbol>
+    <symbol id="i-ajustar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-grade" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol>
+    <symbol id="i-mais" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-menos" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></symbol>
+    <symbol id="i-centro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></symbol>
+    <symbol id="i-lixeira" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+    <symbol id="i-copiar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></symbol>
+    <symbol id="i-relogio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol>
+    <symbol id="i-alerta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5h.01"/></symbol>
+    <symbol id="i-calc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2"/></symbol>
+    <symbol id="i-mao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V5a1.5 1.5 0 013 0v6M11 11V4a1.5 1.5 0 013 0v7M14 11V5.5a1.5 1.5 0 013 0V14a7 7 0 01-7 7h-.5A5.5 5.5 0 014 16l-1-3a1.5 1.5 0 012.6-1.3L8 14"/></symbol>
+    <!-- marcadores dos gráficos -->
+    <symbol id="m-max" viewBox="-8 -8 16 16"><path d="M0 -7L6.5 5H-6.5z"/></symbol>
+    <symbol id="m-min" viewBox="-8 -8 16 16"><path d="M0 7L6.5 -5H-6.5z"/></symbol>
+  </defs>
+</svg>
+
+
+<!-- =========================================================
+     1. BOAS-VINDAS
+     ========================================================= -->
+<section class="tela" id="tela-boas-vindas" data-titulo="Boas-vindas" aria-labelledby="bv-titulo">
+  <header class="topo">
+    <a class="marca" href="#principal" aria-label="MiniGeo, ir para a tela principal"><span class="marca-icone"><svg><use href="#i-logo"/></svg></span>MiniGeo</a>
+    <span class="espaco"></span>
+    <a class="btn" href="#principal">Pular introdução</a>
+  </header>
+
+  <main class="bv-corpo">
+    <div class="bv-hero">
+      <div>
+        <h1 id="bv-titulo">Do enunciado ao gráfico, com cada passo explicado.</h1>
+        <p>Digite uma função e veja o gráfico, os limites, a derivada, os máximos e mínimos. Cada resultado mostra a regra usada para chegar nele.</p>
+
+        <form class="bv-teste" data-acao="experimentar" novalidate>
+          <label class="rotulo" for="bv-funcao">Experimente agora</label>
+          <div class="linha">
+            <input class="entrada entrada-funcao" id="bv-funcao" value="x^3 - 3x + 1" autocomplete="off" spellcheck="false" aria-describedby="bv-previa bv-erro">
+            <button class="btn btn-principal" type="submit">Analisar função</button>
+          </div>
+          <span class="previa" id="bv-previa" data-previa-de="bv-funcao"></span>
+          <span class="msg-erro" id="bv-erro" role="alert"></span>
+        </form>
+
+        <div class="bv-acoes">
+          <a class="btn" href="#principal" data-acao="projeto-novo">Começar projeto em branco</a>
+          <a class="btn btn-texto" href="#tutorial">Ver tutorial de 1 minuto</a>
+        </div>
+      </div>
+
+      <div class="papel bv-quadro">
+        <svg viewBox="0 0 520 340" role="img" aria-label="Gráfico de f(x) = x³ − 3x + 1 com máximo em (−1, 3), mínimo em (1, −1) e a tangente em x = 2">
+          <path d="M0 165H520M260 0V340" stroke="#8C95A8" stroke-width="1.5"/>
+          <path d="M350 257.4L466.2 -49.5" stroke="#C2352B" stroke-width="2" stroke-dasharray="7 5" fill="none"/>
+          <path d="M65.0 358.1 L71.6 325.8 L78.2 296.1 L84.9 269.0 L91.5 244.2 L98.1 221.7 L104.7 201.5 L111.4 183.4 L118.0 167.4 L124.6 153.2 L131.2 141.0 L137.9 130.5 L144.5 121.7 L151.1 114.5 L157.8 108.8 L164.4 104.4 L171.0 101.4 L177.6 99.7 L184.2 99.0 L190.9 99.4 L197.5 100.7 L204.1 102.9 L210.8 105.9 L217.4 109.5 L224.0 113.8 L230.6 118.5 L237.2 123.6 L243.9 129.0 L250.5 134.7 L257.1 140.5 L263.8 146.3 L270.4 152.1 L277.0 157.7 L283.6 163.1 L290.2 168.2 L296.9 172.8 L303.5 177.0 L310.1 180.5 L316.8 183.4 L323.4 185.5 L330.0 186.7 L336.6 187.0 L343.2 186.2 L349.9 184.2 L356.5 181.1 L363.1 176.6 L369.8 170.6 L376.4 163.2 L383.0 154.2 L389.6 143.5 L396.3 131.0 L402.9 116.6 L409.5 100.3 L416.1 81.9 L422.8 61.4 L429.4 38.7 L436.0 13.6" stroke="#2347C5" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <use href="#m-max" x="177" y="91" width="16" height="16" fill="#11765A"/>
+          <use href="#m-min" x="327" y="179" width="16" height="16" fill="#B45309"/>
+          <circle cx="410" cy="99" r="6" fill="#C2352B"/>
+          <g font-family="STIX Two Text, Georgia, serif" font-size="17">
+            <text x="150" y="82" fill="#11765A">máx (−1, 3)</text>
+            <text x="300" y="214" fill="#B45309">mín (1, −1)</text>
+            <text x="420" y="104" fill="#C2352B">f′(2) = 9</text>
+          </g>
+        </svg>
+        <span class="nota mat">f(x) = x³ − 3x + 1</span>
+      </div>
+    </div>
+
+    <section aria-labelledby="bv-recursos">
+      <h2 class="secao-titulo" id="bv-recursos">O que você pode calcular</h2>
+      <p class="secao-sub">Cada cartão abre a tela do cálculo com um exemplo pronto.</p>
+      <div class="recursos">
+        <a class="recurso" href="#principal">
+          <div class="papel miniatura"><svg viewBox="0 0 200 110" aria-hidden="true"><path d="M10 60H190M100 4V106" stroke="#B7BFCD"/><path d="M46.8 61.3 L52.4 50.5 L58.0 43.0 L63.6 38.4 L69.2 36.2 L74.8 36.2 L80.4 37.9 L86.0 41.0 L91.6 45.0 L97.2 49.6 L102.8 54.4 L108.4 59.0 L114.0 63.0 L119.6 66.1 L125.2 67.8 L130.8 67.8 L136.4 65.6 L142.0 61.0 L147.6 53.5 L153.2 42.7" stroke="#2347C5" stroke-width="3" fill="none"/></svg></div>
+          <strong>Gráfico de funções</strong><span class="mat">f(x) = x³ − 3x + 1</span><span>Digite a expressão e veja a curva.</span>
+        </a>
+        <a class="recurso" href="#limite">
+          <div class="papel miniatura"><svg viewBox="0 0 200 110" aria-hidden="true"><path d="M10 80H190M60 4V106" stroke="#B7BFCD"/><path d="M20 96L180 20" stroke="#2347C5" stroke-width="3"/><path d="M112 4V106" stroke="#636C80" stroke-dasharray="4 4"/><circle cx="112" cy="51" r="6" fill="#fff" stroke="#2347C5" stroke-width="3"/></svg></div>
+          <strong>Limites</strong><span class="mat">lim x→2 (x² − 4)/(x − 2)</span><span>Valor, limites laterais e tabela de aproximação.</span>
+        </a>
+        <a class="recurso" href="#derivada">
+          <div class="papel miniatura"><svg viewBox="0 0 200 110" aria-hidden="true"><path d="M10 60H190M100 4V106" stroke="#B7BFCD"/><path d="M46.8 61.3 L52.4 50.5 L58.0 43.0 L63.6 38.4 L69.2 36.2 L74.8 36.2 L80.4 37.9 L86.0 41.0 L91.6 45.0 L97.2 49.6 L102.8 54.4 L108.4 59.0 L114.0 63.0 L119.6 66.1 L125.2 67.8 L130.8 67.8 L136.4 65.6 L142.0 61.0 L147.6 53.5 L153.2 42.7" stroke="#2347C5" stroke-width="3" fill="none"/><path d="M120 96L182 12" stroke="#C2352B" stroke-width="2" stroke-dasharray="5 4"/><circle cx="148" cy="51" r="4.5" fill="#C2352B"/></svg></div>
+          <strong>Derivadas</strong><span class="mat">f′(x) = 3x² − 3</span><span>Resultado, passo a passo e reta tangente.</span>
+        </a>
+        <a class="recurso" href="#extremos">
+          <div class="papel miniatura"><svg viewBox="0 0 200 110" aria-hidden="true"><path d="M10 60H190M100 4V106" stroke="#B7BFCD"/><path d="M46.8 61.3 L52.4 50.5 L58.0 43.0 L63.6 38.4 L69.2 36.2 L74.8 36.2 L80.4 37.9 L86.0 41.0 L91.6 45.0 L97.2 49.6 L102.8 54.4 L108.4 59.0 L114.0 63.0 L119.6 66.1 L125.2 67.8 L130.8 67.8 L136.4 65.6 L142.0 61.0 L147.6 53.5 L153.2 42.7" stroke="#2347C5" stroke-width="3" fill="none"/><use href="#m-max" x="65" y="22" width="14" height="14" fill="#11765A"/><use href="#m-min" x="121" y="72" width="14" height="14" fill="#B45309"/></svg></div>
+          <strong>Máximos e mínimos</strong><span class="mat">máx (−1, 3), mín (1, −1)</span><span>Pontos críticos, classificação e sinal de f′.</span>
+        </a>
+        <a class="recurso" href="#otimizacao">
+          <div class="papel miniatura"><svg viewBox="0 0 200 110" aria-hidden="true"><path d="M10 96H190" stroke="#B7BFCD"/><path d="M30 96Q100 -30 170 96" stroke="#2347C5" stroke-width="3" fill="none"/><path d="M100 35V96" stroke="#636C80" stroke-dasharray="4 4"/><use href="#m-max" x="93" y="22" width="14" height="14" fill="#11765A"/></svg></div>
+          <strong>Otimização</strong><span class="mat">maximizar A = x · y</span><span>Do problema de enunciado ao valor ótimo.</span>
+        </a>
+      </div>
+    </section>
+
+    <section aria-labelledby="bv-como">
+      <h2 class="secao-titulo" id="bv-como">Como funciona</h2>
+      <ol class="como">
+        <li><span class="num">1</span><div><strong>Digite a função</strong><p>Pelo teclado ou pelo teclado matemático. A prévia mostra como o app entendeu.</p></div></li>
+        <li><span class="num">2</span><div><strong>Escolha o cálculo</strong><p>Limite, derivada, máximos e mínimos ou otimização, pela barra de ferramentas.</p></div></li>
+        <li><span class="num">3</span><div><strong>Entenda o resultado</strong><p>Valor, passo a passo e gráfico lado a lado, prontos para levar ao gráfico principal.</p></div></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="bv-rodape">
+    <div>
+      <label class="marcar"><input type="checkbox" id="bv-nao-mostrar"> Não mostrar esta tela novamente</label>
+      <span>Atalhos: <kbd>Ctrl</kbd> + <kbd>Z</kbd> desfaz, <kbd>Enter</kbd> calcula, <kbd>?</kbd> abre a ajuda</span>
+    </div>
+  </footer>
+</section>
+
+
+<!-- =========================================================
+     2. TELA PRINCIPAL
+     ========================================================= -->
+<section class="tela" id="tela-principal" data-titulo="Estudo de f(x)">
+  <header class="topo">
+    <a class="marca" href="#boas-vindas" aria-label="MiniGeo, ir para a boas-vindas"><span class="marca-icone"><svg><use href="#i-logo"/></svg></span>MiniGeo</a>
+    <span class="divisor-v esconde-estreito"></span>
+    <label class="sr-only" for="nome-projeto">Nome do projeto</label>
+    <input class="nome-projeto" id="nome-projeto" value="Estudo de f(x)">
+    <span class="espaco"></span>
+    <button class="btn btn-icone" type="button" data-acao="desfazer" aria-label="Desfazer" title="Desfazer (Ctrl+Z)"><svg><use href="#i-desfazer"/></svg></button>
+    <button class="btn btn-icone" type="button" data-acao="refazer" aria-label="Refazer" title="Refazer (Ctrl+Y)"><svg><use href="#i-refazer"/></svg></button>
+    <button class="btn esconde-estreito" type="button" data-abrir="dlg-exemplos">Exemplos</button>
+    <button class="btn esconde-estreito" type="button" data-acao="exportar">Exportar imagem</button>
+    <a class="btn btn-icone" href="#tutorial" aria-label="Ajuda: abrir o tutorial"><svg><use href="#i-ajuda"/></svg></a>
+  </header>
+
+  <nav class="ferramentas" aria-label="Ferramentas">
+    <button class="ferramenta" type="button" data-ferramenta="mover" aria-pressed="true"><svg><use href="#i-mover"/></svg>Mover</button>
+    <span class="sep" aria-hidden="true"></span>
+    <button class="ferramenta" type="button" data-ferramenta="funcao" aria-pressed="false"><svg><use href="#i-funcao"/></svg>Função</button>
+    <a class="ferramenta" href="#limite"><svg><use href="#i-limite"/></svg>Limite</a>
+    <a class="ferramenta" href="#derivada"><svg><use href="#i-derivada"/></svg>Derivada</a>
+    <a class="ferramenta" href="#extremos"><svg><use href="#i-extremos"/></svg>Máx e mín</a>
+    <a class="ferramenta" href="#otimizacao"><svg><use href="#i-otimizar"/></svg>Otimizar</a>
+    <span class="espaco"></span>
+    <button class="ferramenta" type="button" data-acao="ajustar"><svg><use href="#i-ajustar"/></svg>Ajustar zoom</button>
+    <button class="ferramenta" type="button" data-acao="grade" aria-pressed="true"><svg><use href="#i-grade"/></svg>Grade</button>
+  </nav>
+
+  <div class="area">
+    <!-- objetos -->
+    <aside class="painel esq" aria-labelledby="obj-titulo">
+      <div class="painel-cabeca"><h2 id="obj-titulo" style="font-size:14px">Objetos</h2><span data-contagem>4 itens</span></div>
+      <ul class="objetos" id="lista-objetos">
+        <!-- preenchido pelo app.js a partir de "objetos" -->
+      </ul>
+      <p class="painel-dica">Clique no nome para analisar. Clique duas vezes para editar no campo de comandos.</p>
+    </aside>
+
+    <!-- gráfico -->
+    <section class="papel quadro" aria-label="Área do gráfico" id="quadro">
+      <svg viewBox="0 0 800 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Gráfico de f(x) = x³ − 3x + 1 com a tangente em x = 2, máximo em (−1, 3) e mínimo em (1, −1)">
+        <path d="M0 300H800M400 0V560" stroke="#8C95A8" stroke-width="1.5"/>
+        <g font-family="Instrument Sans, sans-serif" font-size="13" fill="#636C80" text-anchor="middle">
+          <text x="256" y="320">−2</text><text x="328" y="320">−1</text><text x="472" y="320">1</text><text x="544" y="320">2</text><text x="616" y="320">3</text>
+          <text x="388" y="214" text-anchor="end">4</text><text x="388" y="390" text-anchor="end">−4</text>
+          <text x="786" y="292">x</text><text x="412" y="16">y</text>
+        </g>
+        <g data-objeto="t"><path d="M443.2 511.2L644.8 -43.2" stroke="#636C80" stroke-width="2" stroke-dasharray="8 6"/></g>
+        <g data-objeto="g"><path d="M233 556 Q400 64 567 556" stroke="#C2352B" stroke-width="2.5" fill="none" opacity=".9"/></g>
+        <g data-objeto="f"><path d="M202.0 554.0 L208.7 515.2 L215.4 479.4 L222.2 446.5 L228.9 416.5 L235.6 389.2 L242.3 364.5 L249.0 342.4 L255.8 322.7 L262.5 305.2 L269.2 290.0 L275.9 276.9 L282.6 265.7 L289.4 256.4 L296.1 248.9 L302.8 243.0 L309.5 238.7 L316.2 235.9 L323.0 234.3 L329.7 234.0 L336.4 234.9 L343.1 236.7 L349.8 239.5 L356.6 243.0 L363.3 247.3 L370.0 252.1 L376.7 257.4 L383.4 263.1 L390.2 269.0 L396.9 275.1 L403.6 281.3 L410.3 287.4 L417.0 293.3 L423.8 299.0 L430.5 304.3 L437.2 309.1 L443.9 313.3 L450.6 316.8 L457.4 319.5 L464.1 321.2 L470.8 322.0 L477.5 321.6 L484.2 320.0 L491.0 317.0 L497.7 312.6 L504.4 306.6 L511.1 299.0 L517.8 289.6 L524.6 278.3 L531.3 265.0 L538.0 249.6 L544.7 232.0 L551.4 212.1 L558.2 189.8 L564.9 164.9 L571.6 137.5 L578.3 107.2 L585.0 74.2 L591.8 38.2 L598.5 -0.9" stroke="#2347C5" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <text x="604" y="60" font-family="STIX Two Text, Georgia, serif" font-size="18" fill="#2347C5">f</text></g>
+        <g data-objeto="A"><use href="#m-max" x="320" y="225" width="18" height="18" fill="#11765A"/><text x="250" y="216" font-family="STIX Two Text, Georgia, serif" font-size="16" fill="#11765A">máx (−1, 3)</text></g>
+        <g data-objeto="B"><use href="#m-min" x="463" y="313" width="18" height="18" fill="#B45309"/><text x="446" y="352" font-family="STIX Two Text, Georgia, serif" font-size="16" fill="#B45309">mín (1, −1)</text></g>
+      </svg>
+      <div class="zoom">
+        <button class="btn" type="button" aria-label="Aumentar zoom"><svg><use href="#i-mais"/></svg></button>
+        <button class="btn" type="button" aria-label="Diminuir zoom"><svg><use href="#i-menos"/></svg></button>
+        <button class="btn" type="button" aria-label="Centralizar visão"><svg><use href="#i-centro"/></svg></button>
+      </div>
+      <span class="coordenadas" aria-hidden="true">x = 2,00   y = 3,00</span>
+      <p class="dica-ferramenta" role="status" id="dica-ferramenta"><svg><use href="#i-mao"/></svg><span>Arraste para mover o gráfico. Use a roda do mouse para o zoom.</span></p>
+    </section>
+
+    <!-- análise -->
+    <aside class="painel dir" aria-labelledby="analise-titulo">
+      <div class="analise-titulo"><h2 id="analise-titulo">Análise de f</h2><span class="mat" style="color:var(--tinta-2)">f(x) = x³ − 3x + 1</span></div>
+
+      <div class="bloco">
+        <h3>Limite <a class="btn btn-texto btn-pequeno" href="#limite">Abrir tela</a></h3>
+        <div class="linha-inline">
+          <label class="rotulo" for="an-lim-x">x →</label>
+          <input class="entrada" id="an-lim-x" value="2" style="width:72px">
+          <label class="sr-only" for="an-lim-dir">Direção</label>
+          <select class="entrada" id="an-lim-dir" style="flex:1"><option>ambos os lados</option><option>pela esquerda</option><option>pela direita</option></select>
+        </div>
+        <p class="resultado">lim f(x) = 3</p>
+        <p class="detalhe">Esquerda e direita: 3. O limite existe.</p>
+      </div>
+
+      <div class="bloco">
+        <h3>Derivada <a class="btn btn-texto btn-pequeno" href="#derivada">Abrir tela</a></h3>
+        <p class="resultado">f′(x) = 3x² − 3</p>
+        <div class="linha-inline"><label class="rotulo" for="an-der-x">Em x =</label><input class="entrada" id="an-der-x" value="2" style="width:72px"><span class="resultado">f′(2) = 9</span></div>
+        <label class="marcar"><input type="checkbox" checked data-mostrar="t"> Mostrar reta tangente</label>
+      </div>
+
+      <div class="bloco">
+        <h3>Máximos e mínimos <a class="btn btn-texto btn-pequeno" href="#extremos">Passo a passo</a></h3>
+        <p class="resultado">máx (−1, 3) e mín (1, −1)</p>
+        <p class="detalhe">Cresce em (−∞, −1) e (1, ∞). Decresce em (−1, 1).</p>
+      </div>
+
+      <div class="bloco">
+        <h3>Otimização</h3>
+        <div class="linha-campos">
+          <div class="campo"><label for="an-a">De</label><input class="entrada" id="an-a" value="−2"></div>
+          <div class="campo"><label for="an-b">Até</label><input class="entrada" id="an-b" value="2"></div>
+        </div>
+        <div class="segmentado" role="group" aria-label="Maximizar ou minimizar"><button type="button" aria-pressed="true">Maximizar</button><button type="button" aria-pressed="false">Minimizar</button></div>
+        <p class="resultado">Máximo absoluto: 3, em x = −1 e x = 2</p>
+        <a class="btn btn-principal" href="#otimizacao">Abrir assistente de problemas</a>
+      </div>
+    </aside>
+  </div>
+
+  <form class="comandos" data-acao="comando" novalidate>
+    <label for="comando">Comando</label>
+    <input class="entrada" id="comando" autocomplete="off" spellcheck="false" placeholder="f(x) = x^2 − 4,  Derivada(f),  Limite(f, 2),  A = (1, 2)" aria-describedby="retorno-comando">
+    <button class="btn btn-principal" type="submit">Executar</button>
+    <p class="retorno" id="retorno-comando" role="status"></p>
+  </form>
+</section>
+
+
+<!-- =========================================================
+     3. CALCULAR DERIVADA
+     ========================================================= -->
+<section class="tela" id="tela-derivada" data-titulo="Derivada">
+  <header class="topo">
+    <a class="btn btn-icone" href="#principal" aria-label="Voltar à tela principal"><svg><use href="#i-voltar"/></svg></a>
+    <a class="marca" href="#principal"><span class="marca-icone"><svg><use href="#i-logo"/></svg></span>MiniGeo</a>
+    <nav class="trilha esconde-estreito" aria-label="Você está em"><span>Cálculo</span><span aria-hidden="true">/</span><strong>Derivada</strong></nav>
+    <span class="espaco"></span>
+    <button class="btn" type="button" data-abrir="dlg-historico"><svg><use href="#i-relogio"/></svg>Histórico</button>
+    <a class="btn btn-icone" href="#tutorial" aria-label="Ajuda: abrir o tutorial"><svg><use href="#i-ajuda"/></svg></a>
+  </header>
+
+  <main class="calc">
+    <form class="cartao calc-entrada" data-calculo="derivada" novalidate aria-labelledby="der-t">
+      <h1 class="cartao-titulo" id="der-t">Função</h1>
+      <div class="campo">
+        <label for="der-f">f(x) =</label>
+        <input class="entrada entrada-funcao" id="der-f" value="x^3 - 3x + 1" autocomplete="off" spellcheck="false" aria-describedby="der-f-previa der-f-erro" data-teclado>
+        <span class="previa" id="der-f-previa" data-previa-de="der-f"></span>
+        <span class="msg-erro" id="der-f-erro" role="alert"></span>
+      </div>
+      <div class="teclado" role="group" aria-label="Teclado matemático" data-teclado-de="der-f"></div>
+      <div class="linha-campos">
+        <div class="campo"><span class="rotulo" id="der-ordem">Ordem</span>
+          <div class="segmentado" role="group" aria-labelledby="der-ordem" data-nome="ordem"><button type="button" aria-pressed="true" value="1">1ª</button><button type="button" aria-pressed="false" value="2">2ª</button><button type="button" aria-pressed="false" value="3">3ª</button></div></div>
+        <div class="campo"><label for="der-x">Calcular em x =</label><input class="entrada" id="der-x" value="2" inputmode="decimal" data-teclado><span class="ajuda">Opcional</span></div>
+      </div>
+      <button class="btn btn-principal btn-grande" type="submit">Calcular derivada</button>
+      <hr class="separador">
+      <span class="rotulo">Exemplos</span>
+      <div class="exemplos" data-exemplos-de="der-f"><button type="button" value="x^2*sin(x)">x² · sin x</button><button type="button" value="e^x/x">eˣ / x</button><button type="button" value="ln(x^2+1)">ln(x² + 1)</button><button type="button" value="|x|">|x|</button></div>
+    </form>
+
+    <div class="calc-saida" aria-live="polite">
+      <div class="cartao vazio" data-estado="vazio" hidden><svg><use href="#i-calc"/></svg><strong>Nenhum cálculo ainda</strong><span>Digite uma função e clique em Calcular derivada.</span></div>
+
+      <div class="calc-saida" data-estado="resultado">
+        <div class="cartao">
+          <div class="cartao-cabeca"><h2 class="cartao-titulo">Resultado</h2>
+            <div class="acoes-resultado"><button class="btn" type="button" data-acao="copiar"><svg><use href="#i-copiar"/></svg>Copiar</button><button class="btn btn-caneta" type="button" data-acao="enviar">Adicionar ao gráfico principal</button></div></div>
+          <p class="destaque-sub" data-campo="funcao">f(x) = x³ − 3x + 1</p>
+          <p class="destaque" data-campo="resultado">f′(x) = 3x² − 3</p>
+          <div class="valores"><span>Em x = 2: <b data-campo="valor-derivada">f′(2) = 9</b></span><span><b data-campo="valor-funcao">f(2) = 3</b></span><span>Tangente: <b data-campo="tangente">y = 9x − 15</b></span></div>
+        </div>
+
+        <div class="calc-colunas tres">
+          <div class="cartao"><h2 class="cartao-titulo">Passo a passo</h2><ol class="passos" data-lista="passos"></ol></div>
+          <div class="calc-pilha">
+            <div class="cartao">
+              <h2 class="cartao-titulo">Gráfico</h2>
+              <div class="papel grafico-cartao">
+                <svg viewBox="0 0 560 280" role="img" aria-label="Gráficos de f e f′ com a tangente em x = 2">
+                  <path d="M0 150H560M230 0V280" stroke="#8C95A8" stroke-width="1.5"/>
+                  <g font-family="Instrument Sans, sans-serif" font-size="12" fill="#636C80" text-anchor="middle"><text x="110" y="166">−2</text><text x="350" y="166">2</text><text x="470" y="166">4</text></g>
+                  <g data-camada="t"><path d="M278 196.8L446 45.6" stroke="#636C80" stroke-width="2" stroke-dasharray="7 5"/></g>
+                  <g data-camada="d"><path d="M80.0 55.5 L91.2 71.7 L102.4 86.6 L113.6 100.3 L124.8 112.7 L136.0 123.8 L147.2 133.7 L158.4 142.4 L169.6 149.8 L180.8 155.9 L192.0 160.8 L203.2 164.4 L214.4 166.8 L225.6 167.9 L236.8 167.8 L248.0 166.4 L259.2 163.7 L270.4 159.8 L281.6 154.7 L292.8 148.3 L304.0 140.6 L315.2 131.7 L326.4 121.5 L337.6 110.1 L348.8 97.4 L360.0 83.5 L371.2 68.3 L382.4 51.9 L393.6 34.2 L404.8 15.2 L410.4 5.3" stroke="#C2352B" stroke-width="3" fill="none"/><circle cx="350" cy="96" r="5" fill="#C2352B"/></g>
+                  <g data-camada="f"><path d="M80.0 192.8 L91.2 176.6 L102.4 163.4 L113.6 152.9 L124.8 144.8 L136.0 138.9 L147.2 134.9 L158.4 132.7 L169.6 132.0 L180.8 132.5 L192.0 134.1 L203.2 136.5 L214.4 139.4 L225.6 142.7 L236.8 146.0 L248.0 149.2 L259.2 152.1 L270.4 154.3 L281.6 155.7 L292.8 156.0 L304.0 154.9 L315.2 152.4 L326.4 148.0 L337.6 141.7 L348.8 133.1 L360.0 122.0 L371.2 108.2 L382.4 91.4 L393.6 71.4 L404.8 48.1 L416.0 21.1" stroke="#2347C5" stroke-width="3.5" fill="none"/><circle cx="350" cy="132" r="5" fill="#2347C5"/></g>
+                </svg>
+                <div class="zoom"><button class="btn" type="button" aria-label="Aumentar zoom"><svg><use href="#i-mais"/></svg></button><button class="btn" type="button" aria-label="Diminuir zoom"><svg><use href="#i-menos"/></svg></button></div>
+              </div>
+              <div class="legenda">
+                <label class="marcar"><input type="checkbox" checked data-camada-alvo="f"><span class="amostra" style="color:var(--caneta)"></span>f(x)</label>
+                <label class="marcar"><input type="checkbox" checked data-camada-alvo="d"><span class="amostra" style="color:var(--vermelho)"></span>f′(x)</label>
+                <label class="marcar"><input type="checkbox" checked data-camada-alvo="t"><span class="amostra tracejada" style="color:var(--tinta-3)"></span>Tangente em x = 2</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+
+
+<!-- =========================================================
+     4. CALCULAR LIMITE
+     ========================================================= -->
+<section class="tela" id="tela-limite" data-titulo="Limite">
+  <header class="topo">
+    <a class="btn btn-icone" href="#principal" aria-label="Voltar à tela principal"><svg><use href="#i-voltar"/></svg></a>
+    <a class="marca" href="#principal"><span class="marca-icone"><svg><use href="#i-logo"/></svg></span>MiniGeo</a>
+    <nav class="trilha esconde-estreito" aria-label="Você está em"><span>Cálculo</span><span aria-hidden="true">/</span><strong>Limite</strong></nav>
+    <span class="espaco"></span>
+    <button class="btn" type="button" data-abrir="dlg-historico"><svg><use href="#i-relogio"/></svg>Histórico</button>
+    <a class="btn btn-icone" href="#tutorial" aria-label="Ajuda: abrir o tutorial"><svg><use href="#i-ajuda"/></svg></a>
+  </header>
+
+  <main class="calc">
+    <form class="cartao calc-entrada" data-calculo="limite" novalidate aria-labelledby="lim-t">
+      <h1 class="cartao-titulo" id="lim-t">Limite</h1>
+      <div class="campo">
+        <label for="lim-f">f(x) =</label>
+        <input class="entrada entrada-funcao" id="lim-f" value="(x^2 - 4)/(x - 2)" autocomplete="off" spellcheck="false" aria-describedby="lim-f-previa lim-f-erro" data-teclado>
+        <span class="previa" id="lim-f-previa" data-previa-de="lim-f"></span>
+        <span class="msg-erro" id="lim-f-erro" role="alert"></span>
+      </div>
+      <div class="teclado" role="group" aria-label="Teclado matemático" data-teclado-de="lim-f" data-com-infinito></div>
+      <div class="campo">
+        <label for="lim-a">x tende a</label>
+        <input class="entrada" id="lim-a" value="2" aria-describedby="lim-a-ajuda lim-a-erro" data-teclado>
+        <span class="ajuda" id="lim-a-ajuda">Um número, ∞ ou −∞</span>
+        <span class="msg-erro" id="lim-a-erro" role="alert"></span>
+      </div>
+      <div class="campo"><span class="rotulo" id="lim-dir">Aproximar por</span>
+        <div class="segmentado" role="group" aria-labelledby="lim-dir" data-nome="direcao"><button type="button" aria-pressed="true" value="ambos">Os dois lados</button><button type="button" aria-pressed="false" value="esquerda">Esquerda</button><button type="button" aria-pressed="false" value="direita">Direita</button></div></div>
+      <button class="btn btn-principal btn-grande" type="submit">Calcular limite</button>
+      <hr class="separador">
+      <span class="rotulo">Exemplos</span>
+      <div class="exemplos" data-exemplos-de="lim-f"><button type="button" value="sin(x)/x" data-a="0">sin x / x, x → 0</button><button type="button" value="1/x" data-a="0">1/x, x → 0</button><button type="button" value="(2x+1)/(x-3)" data-a="∞">(2x + 1)/(x − 3), x → ∞</button></div>
+    </form>
+
+    <div class="calc-saida" aria-live="polite">
+      <div class="cartao vazio" data-estado="vazio" hidden><svg><use href="#i-calc"/></svg><strong>Nenhum cálculo ainda</strong><span>Digite uma função e o valor de x, e clique em Calcular limite.</span></div>
+
+      <div class="calc-saida" data-estado="resultado">
+        <div class="cartao">
+          <div class="cartao-cabeca"><h2 class="cartao-titulo">Resultado</h2>
+            <div class="acoes-resultado"><button class="btn" type="button" data-acao="copiar"><svg><use href="#i-copiar"/></svg>Copiar</button><button class="btn btn-caneta" type="button" data-acao="enviar">Adicionar ao gráfico principal</button></div></div>
+          <p class="destaque-sub" data-campo="funcao">f(x) = (x² − 4) / (x − 2)</p>
+          <p class="destaque" data-campo="resultado">lim x→2 f(x) = 4</p>
+          <div class="selos" data-lista="selos"></div>
+        </div>
+
+        <div class="calc-colunas tres">
+          <div class="cartao"><h2 class="cartao-titulo">Passo a passo</h2><ol class="passos" data-lista="passos"></ol></div>
+          <div class="calc-pilha">
+            <div class="cartao">
+              <h2 class="cartao-titulo">Gráfico</h2>
+              <div class="papel grafico-cartao">
+                <svg viewBox="0 0 560 280" role="img" aria-label="Gráfico de f, igual à reta y = x + 2 com um buraco em (2, 4)">
+                  <path d="M0 190H560M200 0V280" stroke="#8C95A8" stroke-width="1.5"/>
+                  <g font-family="Instrument Sans, sans-serif" font-size="12" fill="#636C80" text-anchor="middle"><text x="100" y="206">−2</text><text x="400" y="206">4</text><text x="190" y="94" text-anchor="end">4</text></g>
+                  <g data-camada="ass"><path d="M300 0V280" stroke="#636C80" stroke-width="1.5" stroke-dasharray="5 5"/><path d="M0 90H560" stroke="#C2352B" stroke-width="1.5" stroke-dasharray="5 5"/>
+                    <text x="308" y="268" font-family="STIX Two Text, Georgia, serif" font-size="15" fill="#475066">x = 2</text><text x="12" y="82" font-family="STIX Two Text, Georgia, serif" font-size="15" fill="#C2352B">L = 4</text></g>
+                  <path d="M0 240L550 -35" stroke="#2347C5" stroke-width="3.5"/>
+                  <g data-camada="pts" fill="#C2352B"><circle cx="275" cy="102.5" r="4.5"/><circle cx="290" cy="95" r="4.5"/><circle cx="310" cy="85" r="4.5"/><circle cx="325" cy="77.5" r="4.5"/></g>
+                  <circle cx="300" cy="90" r="7" fill="#fff" stroke="#2347C5" stroke-width="3"/>
+                </svg>
+                <div class="zoom"><button class="btn" type="button" aria-label="Aumentar zoom"><svg><use href="#i-mais"/></svg></button><button class="btn" type="button" aria-label="Diminuir zoom"><svg><use href="#i-menos"/></svg></button></div>
+              </div>
+              <div class="legenda">
+                <label class="marcar"><input type="checkbox" checked data-camada-alvo="ass"> Assíntotas e valor do limite</label>
+                <label class="marcar"><input type="checkbox" checked data-camada-alvo="pts"> Pontos de aproximação</label>
+              </div>
+            </div>
+            <div class="cartao">
+              <h2 class="cartao-titulo">Tabela de aproximação</h2>
+              <table class="tabela"><thead><tr><th scope="col">x</th><th scope="col">f(x)</th></tr></thead><tbody data-lista="tabela"></tbody></table>
+              <p class="ajuda">Linhas em amarelo: aproximação pela esquerda.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+
+
+<!-- =========================================================
+     5. MÁXIMOS E MÍNIMOS
+     ========================================================= -->
+<section class="tela" id="tela-extremos" data-titulo="Máximos e mínimos">
+  <header class="topo">
+    <a class="btn btn-icone" href="#principal" aria-label="Voltar à tela principal"><svg><use href="#i-voltar"/></svg></a>
+    <a class="marca" href="#principal"><span class="marca-icone"><svg><use href="#i-logo"/></svg></span>MiniGeo</a>
+    <nav class="trilha esconde-estreito" aria-label="Você está em"><span>Cálculo</span><span aria-hidden="true">/</span><strong>Máximos e mínimos</strong></nav>
+    <span class="espaco"></span>
+    <button class="btn" type="button" data-abrir="dlg-historico"><svg><use href="#i-relogio"/></svg>Histórico</button>
+    <a class="btn btn-icone" href="#tutorial" aria-label="Ajuda: abrir o tutorial"><svg><use href="#i-ajuda"/></svg></a>
+  </header>
+
+  <main class="calc">
+    <form class="cartao calc-entrada" data-calculo="extremos" novalidate aria-labelledby="ext-t">
+      <h1 class="cartao-titulo" id="ext-t">Função</h1>
+      <div class="campo">
+        <label for="ext-f">f(x) =</label>
+        <input class="entrada entrada-funcao" id="ext-f" value="x^3 - 3x + 1" autocomplete="off" spellcheck="false" aria-describedby="ext-f-previa ext-f-erro" data-teclado>
+        <span class="previa" id="ext-f-previa" data-previa-de="ext-f"></span>
+        <span class="msg-erro" id="ext-f-erro" role="alert"></span>
+      </div>
+      <div class="teclado" role="group" aria-label="Teclado matemático" data-teclado-de="ext-f"></div>
+      <div class="campo"><span class="rotulo" id="ext-tipo">Procurar</span>
+        <div class="segmentado" role="group" aria-labelledby="ext-tipo" data-nome="tipo"><button type="button" aria-pressed="false" value="locais">Extremos locais</button><button type="button" aria-pressed="true" value="absolutos">Em um intervalo</button></div></div>
+      <div class="linha-campos" data-intervalo>
+        <div class="campo"><label for="ext-a">De a =</label><input class="entrada" id="ext-a" value="−2" data-teclado></div>
+        <div class="campo"><label for="ext-b">Até b =</label><input class="entrada" id="ext-b" value="2" data-teclado></div>
+      </div>
+      <span class="msg-erro" id="ext-int-erro" role="alert"></span>
+      <button class="btn btn-principal btn-grande" type="submit">Encontrar máximos e mínimos</button>
+      <hr class="separador">
+      <span class="rotulo">Exemplos</span>
+      <div class="exemplos" data-exemplos-de="ext-f"><button type="button" value="x^2 - 4x">x² − 4x</button><button type="button" value="x^4 - 2x^2">x⁴ − 2x²</button><button type="button" value="x^3">x³</button></div>
+    </form>
+
+    <div class="calc-saida" aria-live="polite">
+      <div class="cartao vazio" data-estado="vazio" hidden><svg><use href="#i-calc"/></svg><strong>Nenhum cálculo ainda</strong><span>Digite uma função e clique em Encontrar máximos e mínimos.</span></div>
+
+      <div class="calc-saida" data-estado="resultado">
+        <div class="cartao">
+          <div class="cartao-cabeca"><h2 class="cartao-titulo">Resultado</h2>
+            <div class="acoes-resultado"><button class="btn" type="button" data-acao="copiar"><svg><use href="#i-copiar"/></svg>Copiar</button><button class="btn btn-caneta" type="button" data-acao="enviar">Adicionar ao gráfico principal</button></div></div>
+          <p class="destaque-sub" data-campo="funcao">f(x) = x³ − 3x + 1</p>
+          <div class="caixas" data-lista="caixas"></div>
+          <div class="aviso"><svg><use href="#i-info"/></svg><span data-campo="absolutos">No intervalo [−2, 2], o maior valor é 3 (em x = −1 e x = 2) e o menor é −1 (em x = −2 e x = 1).</span></div>
+        </div>
+
+        <div class="calc-colunas tres">
+          <div class="cartao"><h2 class="cartao-titulo">Passo a passo</h2><ol class="passos" data-lista="passos"></ol></div>
+          <div class="calc-pilha">
+            <div class="cartao">
+              <h2 class="cartao-titulo">Gráfico</h2>
+              <div class="papel grafico-cartao">
+                <svg viewBox="0 0 560 280" role="img" aria-label="Gráfico de f com máximo em (−1, 3), mínimo em (1, −1) e o intervalo [−2, 2] destacado">
+                  <rect x="120" y="0" width="320" height="280" fill="#2347C5" opacity=".06"/>
+                  <path d="M0 135H560M280 0V280" stroke="#8C95A8" stroke-width="1.5"/>
+                  <path d="M120 0V280M440 0V280" stroke="#636C80" stroke-dasharray="5 5"/>
+                  <g font-family="STIX Two Text, Georgia, serif" font-size="15" fill="#475066"><text x="126" y="268">a = −2</text><text x="446" y="268">b = 2</text></g>
+                  <path d="M92.0 233.6 L104.5 194.4 L117.1 161.8 L129.6 135.1 L142.1 114.0 L154.7 97.9 L167.2 86.5 L179.7 79.2 L192.3 75.6 L204.8 75.2 L217.3 77.6 L229.9 82.3 L242.4 88.9 L254.9 96.8 L267.5 105.7 L280.0 115.0 L292.5 124.3 L305.1 133.2 L317.6 141.1 L330.1 147.7 L342.7 152.4 L355.2 154.8 L367.7 154.4 L380.3 150.8 L392.8 143.5 L405.3 132.1 L417.9 116.0 L430.4 94.9 L442.9 68.2 L455.5 35.6 L468.0 -3.6" stroke="#2347C5" stroke-width="3.5" fill="none"/>
+                  <g data-camada="loc"><use href="#m-max" x="191" y="66" width="18" height="18" fill="#11765A"/><use href="#m-min" x="351" y="146" width="18" height="18" fill="#B45309"/>
+                    <g font-family="STIX Two Text, Georgia, serif" font-size="15"><text x="160" y="56" fill="#11765A">máx (−1, 3)</text><text x="326" y="186" fill="#B45309">mín (1, −1)</text></g></g>
+                  <g data-camada="pontas" fill="#fff" stroke="#2347C5" stroke-width="2.5"><rect x="114" y="149" width="12" height="12"/><rect x="434" y="69" width="12" height="12"/></g>
+                </svg>
+                <div class="zoom"><button class="btn" type="button" aria-label="Aumentar zoom"><svg><use href="#i-mais"/></svg></button><button class="btn" type="button" aria-label="Diminuir zoom"><svg><use href="#i-menos"/></svg></button></div>
+              </div>
+              <div class="legenda">
+                <label class="marcar"><input type="checkbox" checked data-camada-alvo="loc"> Extremos locais</label>
+                <label class="marcar"><input type="checkbox" checked data-camada-alvo="pontas"> Valores nas pontas do intervalo</label>
+              </div>
+            </div>
+            <div class="cartao">
+              <h2 class="cartao-titulo">Sinal de f′(x)</h2>
+              <table class="tabela"><thead><tr><th scope="col">Intervalo</th><th scope="col">f′</th><th scope="col">f</th></tr></thead><tbody data-lista="sinais"></tbody></table>
+              <p class="ajuda">f′ troca de + para − em x = −1 (máximo) e de − para + em x = 1 (mínimo).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+
+
+<!-- =========================================================
+     6. ASSISTENTE DE OTIMIZAÇÃO
+     ========================================================= -->
+<section class="tela" id="tela-otimizacao" data-titulo="Otimização">
+  <header class="topo">
+    <a class="btn btn-icone" href="#principal" aria-label="Voltar à tela principal"><svg><use href="#i-voltar"/></svg></a>
+    <a class="marca" href="#principal"><span class="marca-icone"><svg><use href="#i-logo"/></svg></span>MiniGeo</a>
+    <nav class="trilha esconde-estreito" aria-label="Você está em"><span>Cálculo</span><span aria-hidden="true">/</span><strong>Otimização</strong></nav>
+    <span class="espaco"></span>
+    <button class="btn" type="button" data-abrir="dlg-historico"><svg><use href="#i-relogio"/></svg>Histórico</button>
+    <a class="btn btn-icone" href="#tutorial" aria-label="Ajuda: abrir o tutorial"><svg><use href="#i-ajuda"/></svg></a>
+  </header>
+
+  <main class="calc">
+    <form class="cartao calc-entrada" data-calculo="otimizacao" novalidate aria-labelledby="opt-t">
+      <h1 class="cartao-titulo" id="opt-t">Monte o problema</h1>
+      <div class="campo">
+        <span class="rotulo" id="opt-mod">Começar por um modelo</span>
+        <div class="modelos" role="group" aria-labelledby="opt-mod">
+          <button type="button" aria-pressed="true" data-modelo="retangulo">Retângulo e perímetro</button>
+          <button type="button" aria-pressed="false" data-modelo="caixa">Caixa sem tampa</button>
+          <button type="button" aria-pressed="false" data-modelo="cerca">Cerca com rio</button>
+          <button type="button" aria-pressed="false" data-modelo="distancia">Distância mínima</button>
+        </div>
+      </div>
+      <hr class="separador">
+      <div class="etapa"><span class="num" aria-hidden="true">1</span><div>
+        <strong>O que otimizar</strong>
+        <div class="segmentado" role="group" aria-label="Maximizar ou minimizar" data-nome="objetivo"><button type="button" aria-pressed="true" value="max">Maximizar</button><button type="button" aria-pressed="false" value="min">Minimizar</button></div>
+        <div class="campo"><label for="opt-obj">Quantidade</label><input class="entrada entrada-funcao" id="opt-obj" value="A = x*y" autocomplete="off" spellcheck="false" aria-describedby="opt-obj-ajuda opt-obj-erro" data-teclado><span class="ajuda" id="opt-obj-ajuda">Área, volume, custo ou distância. Escreva nome = expressão.</span><span class="msg-erro" id="opt-obj-erro" role="alert"></span></div>
+      </div></div>
+      <div class="etapa"><span class="num" aria-hidden="true">2</span><div>
+        <strong>Restrição</strong>
+        <div class="campo"><label for="opt-res">Equação que liga as variáveis</label><input class="entrada entrada-funcao" id="opt-res" value="2x + 2y = 20" autocomplete="off" spellcheck="false" aria-describedby="opt-res-erro" data-teclado><span class="msg-erro" id="opt-res-erro" role="alert"></span></div>
+      </div></div>
+      <div class="etapa"><span class="num" aria-hidden="true">3</span><div>
+        <strong>Variável e domínio</strong>
+        <div class="linha-campos">
+          <div class="campo"><label for="opt-var">Variável</label><select class="entrada" id="opt-var"><option>x</option><option>y</option></select></div>
+          <div class="campo"><label for="opt-de">De</label><input class="entrada" id="opt-de" value="0" data-teclado></div>
+          <div class="campo"><label for="opt-ate">Até</label><input class="entrada" id="opt-ate" value="10" data-teclado></div>
+        </div>
+        <label class="marcar"><input type="checkbox" id="opt-bordas"> Incluir as bordas do domínio</label>
+      </div></div>
+      <button class="btn btn-principal btn-grande" type="submit">Resolver problema</button>
+      <button class="btn" type="button" data-acao="mostrar-teclado" aria-expanded="false" aria-controls="opt-teclado">Mostrar teclado matemático</button>
+      <div class="teclado" id="opt-teclado" role="group" aria-label="Teclado matemático" data-teclado-de="opt-obj" hidden></div>
+    </form>
+
+    <div class="calc-saida" aria-live="polite">
+      <div class="cartao vazio" data-estado="vazio" hidden><svg><use href="#i-calc"/></svg><strong>Nenhum problema resolvido ainda</strong><span>Escolha um modelo ou escreva o seu e clique em Resolver problema.</span></div>
+
+      <div class="calc-saida" data-estado="resultado">
+        <div class="cartao">
+          <div class="cartao-cabeca"><h2 class="cartao-titulo">Resultado</h2>
+            <div class="acoes-resultado"><button class="btn" type="button" data-acao="copiar"><svg><use href="#i-copiar"/></svg>Copiar</button><button class="btn btn-caneta" type="button" data-acao="enviar">Adicionar ao gráfico principal</button></div></div>
+          <p class="destaque-sub" data-campo="enunciado">Maximizar A = x · y, sabendo que 2x + 2y = 20</p>
+          <div class="caixas">
+            <div class="caixa max"><span class="rotulo"><svg width="12" height="12"><use href="#m-max" fill="#11765A"/></svg>Área máxima</span><span class="mat" data-campo="otimo">A = 25</span></div>
+            <div class="caixa"><span class="rotulo">Valores que dão o ótimo</span><span class="mat" data-campo="valores">x = 5 e y = 5</span></div>
+          </div>
+          <p data-campo="resposta">Resposta: o retângulo de perímetro 20 com a maior área é o quadrado de lado 5.</p>
+        </div>
+
+        <div class="calc-colunas tres">
+          <div class="cartao"><h2 class="cartao-titulo">Passo a passo</h2><ol class="passos" data-lista="passos"></ol></div>
+          <div class="calc-pilha">
+            <div class="cartao">
+              <h2 class="cartao-titulo">Gráfico de A(x)</h2>
+              <div class="papel grafico-cartao">
+                <svg viewBox="0 0 560 280" role="img" aria-label="Parábola A(x) = 10x − x², com máximo em (5, 25)">
+                  <rect x="50" y="0" width="460" height="280" fill="#2347C5" opacity=".06"/>
+                  <path d="M0 215H560M50 0V280" stroke="#8C95A8" stroke-width="1.5"/>
+                  <path d="M280 30V215M50 30H280" stroke="#636C80" stroke-dasharray="5 5"/>
+                  <path d="M22.4 262.1 L39.6 232.2 L56.7 204.3 L73.9 178.5 L91.1 154.8 L108.3 133.1 L125.4 113.5 L142.6 96.0 L159.8 80.5 L177.0 67.1 L194.1 55.8 L211.3 46.5 L228.5 39.3 L245.7 34.1 L262.8 31.0 L280.0 30.0 L297.2 31.0 L314.3 34.1 L331.5 39.3 L348.7 46.5 L365.9 55.8 L383.0 67.1 L400.2 80.5 L417.4 96.0 L434.6 113.5 L451.7 133.1 L468.9 154.8 L486.1 178.5 L503.3 204.3 L520.4 232.2 L537.6 262.1" stroke="#2347C5" stroke-width="3.5" fill="none"/>
+                  <use href="#m-max" x="271" y="20" width="18" height="18" fill="#11765A"/>
+                  <g fill="#fff" stroke="#2347C5" stroke-width="2.5"><circle cx="50" cy="215" r="6"/><circle cx="510" cy="215" r="6"/></g>
+                  <g font-family="STIX Two Text, Georgia, serif" font-size="15"><text x="296" y="26" fill="#11765A">máx (5, 25)</text><text x="286" y="236" fill="#475066">x = 5</text><text x="56" y="236" fill="#475066">0</text><text x="494" y="236" fill="#475066">10</text></g>
+                </svg>
+              </div>
+              <p class="ajuda">A faixa azul é o domínio. Os círculos vazios marcam bordas que ficam de fora.</p>
+            </div>
+            <div class="cartao">
+              <h2 class="cartao-titulo">Figura do problema</h2>
+              <div class="figura">
+                <svg viewBox="0 0 280 170" role="img" aria-label="Quadrado de lado 5 com área 25">
+                  <rect x="85" y="20" width="110" height="110" fill="#E8EDFC" stroke="#2347C5" stroke-width="3"/>
+                  <g font-family="STIX Two Text, Georgia, serif" font-size="16" fill="#182033" text-anchor="middle"><text x="140" y="152">x = 5</text><text x="62" y="80">y = 5</text><text x="140" y="80">A = 25</text></g>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+
+
+<!-- =========================================================
+     7. TUTORIAL
+     ========================================================= -->
+<section class="tela" id="tela-tutorial" data-titulo="Tutorial">
+  <header class="topo">
+    <a class="marca" href="#principal"><span class="marca-icone"><svg><use href="#i-logo"/></svg></span>MiniGeo</a>
+    <nav class="trilha esconde-estreito" aria-label="Você está em"><strong>Tutorial</strong><span>cerca de 1 minuto</span></nav>
+    <span class="espaco"></span>
+    <button class="btn" type="button" data-acao="sair-tutorial">Pular tutorial</button>
+    <button class="btn btn-icone" type="button" data-acao="sair-tutorial" aria-label="Fechar tutorial"><svg><use href="#i-fechar"/></svg></button>
+  </header>
+
+  <main class="tut">
+    <aside aria-labelledby="tut-lista">
+      <h2 class="sr-only" id="tut-lista">Etapas</h2>
+      <ol class="tut-etapas" id="tut-etapas"><!-- preenchido pelo app.js --></ol>
+      <div class="progresso" role="progressbar" aria-label="Progresso do tutorial" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1"><div style="width:20%"></div></div>
+      <p class="ajuda" style="margin-top:8px" id="tut-restante">Etapa 1 de 5</p>
+    </aside>
+
+    <section class="cartao" aria-live="polite">
+      <div class="cartao-cabeca">
+        <h1 style="font-size:26px; letter-spacing:-.01em" id="tut-titulo" tabindex="-1">Digite uma função</h1>
+        <div class="acoes-resultado">
+          <button class="btn" type="button" data-acao="tut-voltar">Voltar</button>
+          <button class="btn btn-principal" type="button" data-acao="tut-avancar">Próximo</button>
+        </div>
+      </div>
+
+      <!-- um palco por etapa; o app.js mostra o da etapa atual -->
+      <div class="tut-palco" data-etapa="1">
+        <div class="simula foco" style="flex-direction:column; padding:16px"><span class="etiqueta">Campo da função</span>
+          <span class="rotulo">f(x) =</span><span class="entrada entrada-funcao" style="display:flex; align-items:center">x^3 - 3x + 1</span><span class="previa">Prévia: <span class="mat">x³ − 3x + 1</span></span></div>
+        <div class="balao"><strong>Escreva como no caderno</strong><span>Use ^ para potência e parênteses em sin(x). A prévia mostra como o app entendeu a expressão.</span></div>
+        <div class="simula apagado" aria-hidden="true"><span class="peca">x</span><span class="peca">^</span><span class="peca">√</span><span class="peca">π</span><span class="peca">sin</span><span class="peca">cos</span><span class="peca">ln</span></div>
+      </div>
+
+      <div class="tut-palco" data-etapa="2" hidden>
+        <div class="simula foco"><span class="etiqueta">Barra de ferramentas</span>
+          <span class="peca">Mover</span><span class="peca">Função</span><span class="peca" style="border-color:var(--caneta); color:var(--caneta)">Limite</span><span class="peca" style="border-color:var(--caneta); color:var(--caneta)">Derivada</span><span class="peca" style="border-color:var(--caneta); color:var(--caneta)">Máx e mín</span><span class="peca" style="border-color:var(--caneta); color:var(--caneta)">Otimizar</span></div>
+        <div class="balao"><strong>Cada ferramenta abre um tipo de cálculo</strong><span>Clique em Limite, Derivada, Máx e mín ou Otimizar. Você vai para a tela do cálculo e volta quando quiser.</span></div>
+        <div class="apagado" aria-hidden="true" style="display:grid; grid-template-columns:1fr 3fr 1fr; gap:12px"><div class="simula" style="height:110px"></div><div class="simula papel" style="height:110px"></div><div class="simula" style="height:110px"></div></div>
+      </div>
+
+      <div class="tut-palco" data-etapa="3" hidden>
+        <div class="simula foco" style="flex-direction:column; gap:6px; padding:18px"><span class="etiqueta">Resultado</span>
+          <span class="destaque">f′(x) = 3x² − 3</span><span class="valores"><span>Em x = 2: <b>f′(2) = 9</b></span></span></div>
+        <div class="simula" style="padding:18px; display:block">
+          <ol class="passos"><li><span class="regra">Regra da soma</span><span class="dica">Derive cada termo separadamente</span><span class="mat">d/dx[x³] − d/dx[3x] + d/dx[1]</span></li><li><span class="regra">Regra da potência</span><span class="dica">d/dx[xⁿ] = n·xⁿ⁻¹</span><span class="mat">d/dx[x³] = 3x²</span></li></ol>
+        </div>
+        <div class="balao"><strong>O valor e a explicação ficam juntos</strong><span>O resultado aparece em destaque e o passo a passo mostra a regra usada em cada etapa.</span></div>
+      </div>
+
+      <div class="tut-palco" data-etapa="4" hidden>
+        <div class="papel" style="aspect-ratio: 400 / 200">
+          <svg viewBox="0 0 400 200" role="img" aria-label="Gráfico de exemplo com f e sua derivada">
+            <path d="M0 110H400M200 0V200" stroke="#8C95A8" stroke-width="1.5"/>
+            <path d="M74.0 -12.8 L86.6 17.4 L99.2 44.4 L111.8 68.2 L124.4 88.8 L137.0 106.3 L149.6 120.6 L162.2 131.7 L174.8 139.6 L187.4 144.4 L200.0 146.0 L212.6 144.4 L225.2 139.6 L237.8 131.7 L250.4 120.6 L263.0 106.3 L275.6 88.8 L288.2 68.2 L300.8 44.4 L313.4 17.4 L326.0 -12.8" stroke="#C2352B" stroke-width="3" fill="none"/>
+            <path d="M56.0 177.5 L70.7 140.5 L85.4 112.9 L100.1 93.4 L114.8 81.2 L129.5 75.2 L144.2 74.2 L158.9 77.2 L173.6 83.2 L188.3 91.1 L203.0 99.8 L217.7 108.3 L232.4 115.6 L247.1 120.5 L261.8 122.0 L276.5 119.0 L291.2 110.6 L305.9 95.6 L320.6 72.9 L335.3 41.6 L350.0 0.5" stroke="#2347C5" stroke-width="3.5" fill="none"/>
+          </svg>
+        </div>
+        <div><span class="btn btn-caneta" style="outline:3px solid var(--marca-texto); outline-offset:3px">Adicionar ao gráfico principal</span></div>
+        <div class="balao"><strong>Leve o resultado para o gráfico principal</strong><span>O botão envia a função, a derivada e os pontos para a tela principal, onde você compara tudo junto.</span></div>
+      </div>
+
+      <div class="tut-palco" data-etapa="5" hidden>
+        <h2 style="font-size:20px">Tudo pronto para começar</h2>
+        <p style="color:var(--tinta-2)">Escolha por onde começar. Você pode rever este tutorial a qualquer momento pelo botão de ajuda.</p>
+        <div class="acoes-resultado">
+          <a class="btn btn-principal" href="#principal" data-acao="projeto-novo">Começar projeto em branco</a>
+          <a class="btn" href="#principal">Abrir o exemplo f(x) = x³ − 3x + 1</a>
+        </div>
+      </div>
+
+      <div class="cartao-cabeca">
+        <div class="pontos" aria-hidden="true" id="tut-pontos"></div>
+        <span class="ajuda">Use <kbd>←</kbd> e <kbd>→</kbd> para mudar de etapa e <kbd>Esc</kbd> para sair</span>
+      </div>
+    </section>
+  </main>
+</section>
+
+
+<!-- =========================================================
+     DIÁLOGOS
+     ========================================================= -->
+<dialog id="dlg-sair" aria-labelledby="dlg-sair-t">
+  <form method="dialog" class="dialogo">
+    <h2 id="dlg-sair-t">Sair do tutorial?</h2>
+    <p>Você volta para a tela principal e pode rever o tutorial pelo botão de ajuda.</p>
+    <div class="botoes"><button class="btn" value="ficar">Continuar tutorial</button><button class="btn btn-principal" value="sair">Sair do tutorial</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-historico" aria-labelledby="dlg-hist-t">
+  <form method="dialog" class="dialogo">
+    <h2 id="dlg-hist-t">Histórico</h2>
+    <ul class="lista-hist">
+      <li><button value="derivada"><span class="mat">f′ de x³ − 3x + 1</span><small>hoje, 14:20</small></button></li>
+      <li><button value="limite"><span class="mat">lim x→2 (x² − 4)/(x − 2)</span><small>hoje, 14:12</small></button></li>
+      <li><button value="extremos"><span class="mat">extremos de x³ − 3x + 1</span><small>ontem, 21:05</small></button></li>
+      <li><button value="otimizacao"><span class="mat">maximizar A = x · y</span><small>ontem, 20:48</small></button></li>
+    </ul>
+    <div class="botoes"><button class="btn" value="limpar">Limpar histórico</button><button class="btn btn-principal" value="fechar">Fechar</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-exemplos" aria-labelledby="dlg-ex-t">
+  <form method="dialog" class="dialogo">
+    <h2 id="dlg-ex-t">Exemplos</h2>
+    <ul class="lista-hist">
+      <li><button value="x^3 - 3x + 1"><span class="mat">x³ − 3x + 1</span><small>máximo e mínimo</small></button></li>
+      <li><button value="(x^2 - 4)/(x - 2)"><span class="mat">(x² − 4)/(x − 2)</span><small>buraco em x = 2</small></button></li>
+      <li><button value="sin(x)/x"><span class="mat">sin x / x</span><small>limite fundamental</small></button></li>
+      <li><button value="1/x"><span class="mat">1/x</span><small>assíntota vertical</small></button></li>
+      <li><button value="e^(-x^2)"><span class="mat">e^(−x²)</span><small>curva de sino</small></button></li>
+    </ul>
+    <div class="botoes"><button class="btn btn-principal" value="fechar">Fechar</button></div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="js/math-engine.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
