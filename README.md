@@ -2,7 +2,17 @@
 
 MiniGeo é uma calculadora gráfica educacional inspirada no GeoGebra, recriada em HTML, CSS e JavaScript puro. A interface preserva o visual limpo e amigável do protótipo, mas agora executa cálculos reais no navegador e desenha os gráficos dinamicamente em SVG.
 
+Desenvolvido pela equipe:
+
+Brian , Bruno, Fernando Fuques, Guilherme, Guilhermo, Moisés de Jesus,Marcos Patric, Rennan Ferreira, Yan Ramos
+
 ## Como abrir
+
+### Acesse pelo link:
+
+<a>https://devfuques.github.io/mini-geogebra/<a>
+
+### OU
 
 Não há dependências externas nem etapa de build. A partir desta pasta, execute:
 
