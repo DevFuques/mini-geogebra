@@ -2,10 +2,6 @@
 
 MiniGeo é uma calculadora gráfica educacional inspirada no GeoGebra, recriada em HTML, CSS e JavaScript puro. A interface preserva o visual limpo e amigável do protótipo, mas agora executa cálculos reais no navegador e desenha os gráficos dinamicamente em SVG.
 
-Desenvolvido pela equipe:
-
-Brian , Bruno, Fernando Fuques, Guilherme, Guilhermo, Moisés de Jesus,Marcos Patric, Rennan Ferreira, Yan Ramos
-
 ## Como abrir
 
 ### Acesse pelo link:
@@ -79,3 +75,31 @@ public/manus-routes.json    rotas reconhecidas pelo Preview Webdev
 Os cálculos são numéricos quando o problema exige busca, amostragem ou comparação de candidatos. A derivação usa regras simbólicas para a árvore de expressão suportada. Limites em pontos problemáticos, assíntotas e problemas de otimização muito não lineares são apresentados com aproximações e avisos quando não é possível garantir uma forma fechada.
 
 O projeto não usa backend, conta de usuário ou banco de dados: o estado local é armazenado no navegador. As fontes Instrument Sans e STIX Two Text vêm do Google Fonts, com fallback para fontes do sistema quando não há internet.
+
+## Equipe de Desenvolvimento:
+
+QA e DevOps:
+
+- Fernando Fuques
+  
+- Yan Ramos
+
+UX/UI:
+
+- Rennan Pereira
+
+- Guilherme Amorim
+
+Lógica Matemática:
+
+- Moisés Jesus Silva
+  
+- Bruno Sergio Santana
+
+- PATRIC, [Sobrenome]
+
+Gráfico e Integração:
+
+- Brian Macêdo
+
+- Guilhermo Antonio
